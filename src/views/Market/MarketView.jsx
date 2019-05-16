@@ -27,6 +27,22 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
   },
+  header:{
+    width:"20%",
+    color:"#424242",
+    fontSize:"20px",
+    fontWeight:"700",
+    textAlign:"center",
+    border:"1px solid black",
+    marginLeft:"20%"
+  },
+  body:{
+    width:"20%",
+    fontSize:"20px",
+    fontWeight:"600",
+    textAlign:"center",
+    border:"1px solid black"
+  }
 });
 
 const CustomTableCell = withStyles(theme => ({
@@ -94,8 +110,16 @@ class MarketView extends React.Component {
   }
 
   handleChangeProductName=(e)=>{
+    console.log(e.target.value);
     this.setState({
       productName:e.target.value
+    })
+  };
+
+  handleChangePeriod=(e)=>{
+    console.log(e.target.value);
+    this.setState({
+      period: e.target.value
     })
   };
 
@@ -106,7 +130,7 @@ class MarketView extends React.Component {
       <GridContainer xs={12} sm={12} md={12}>
         <GridItem xs={12} sm={12} md={12}>
           <Card chart>
-            <CardHeader color="info">
+            <CardHeader style={{background:"#37474f"}}>
             </CardHeader>
             <CardBody>
               <GridContainer xs={12} sm={12} md={12}>
@@ -126,7 +150,22 @@ class MarketView extends React.Component {
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
-                  <Button style={{background:"#4dd0e1", color:"white", fontSize:"18px", marginTop:"7%"}}>
+                  <TextField
+                      id="theme"
+                      label="Period"
+                      fullWidth
+                      value={this.state.period}
+                      onChange={()=>this.handleChangePeriod}
+                      className={classes.textField}
+                      margin="normal"
+                      variant="outlined"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={12} md={3}>
+                  <Button style={{background:"#37474f", color:"white", fontSize:"18px", marginTop:"7%"}}>
                     <Search/>&nbsp;&nbsp;Search
                   </Button>
                 </GridItem>
@@ -148,38 +187,38 @@ class MarketView extends React.Component {
         <GridItem xs={12} sm={12} md={8}>
           <Table className="market page" style={{marginLeft:"26%", border:"1px solid black"}}>
             <TableHead>
-              <TableRow>
-                <CustomTableCell  style={{width:"20%", color:"#424242", fontSize:"20px", fontWeight:"700", textAlign:"center", border:"1px solid black"}}>Level</CustomTableCell>
-                <CustomTableCell  style={{width:"20%", color:"#424242", fontSize:"20px", fontWeight:"700", textAlign:"center", border:"1px solid black"}}>Buy Vol</CustomTableCell>
-                <CustomTableCell  style={{width:"20%", color:"#424242", fontSize:"20px", fontWeight:"700", textAlign:"center", border:"1px solid black"}}>Price</CustomTableCell>
-                <CustomTableCell  style={{width:"20%", color:"#424242", fontSize:"20px", fontWeight:"700", textAlign:"center", border:"1px solid black"}}>Sell Vol</CustomTableCell>
-                <CustomTableCell  style={{width:"20%", color:"#424242", fontSize:"20px", fontWeight:"700", textAlign:"center", border:"1px solid black"}}>Level</CustomTableCell>
+              <TableRow >
+                <CustomTableCell className={classes.header}>Level</CustomTableCell>
+                <CustomTableCell className={classes.header}>Buy-Vol</CustomTableCell>
+                <CustomTableCell className={classes.header}>Price</CustomTableCell>
+                <CustomTableCell className={classes.header}>Sell-Vol</CustomTableCell>
+                <CustomTableCell className={classes.header}>Level</CustomTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {this.state.rows.map(row => (
                   <TableRow >
-                    <CustomTableCell style={{width:"20%", fontSize:"20px", fontWeight:"600", background:"#bbdefb", textAlign:"center", border:"1px solid black"}}>
+                    <CustomTableCell className={classes.body} style={{background:"#bbdefb"}}>
                       {row.level1 > 0 ? row.level1 : ""}
                       </CustomTableCell>
-                    <CustomTableCell style={{width:"20%", fontSize:"20px", fontWeight:"600", background:"#bbdefb", textAlign:"center", border:"1px solid black"}}>
+                    <CustomTableCell className={classes.body} style={{background:"#bbdefb"}}>
                       {row.buy_vol > 0 ? row.buy_vol : ""}
                       </CustomTableCell>
                     {
                       (row.level1 > 0) ?
-                          <CustomTableCell style={{width: "20%", fontSize: "20px", fontWeight: "600", background: "#9e9e9e", textAlign: "center", color:"#ad1457", border: "1px solid black"}}>{row.price}</CustomTableCell>
+                          <CustomTableCell className={classes.body} style={{background: "#9e9e9e", color:"#ad1457"}}>{row.price}</CustomTableCell>
                       :
                           (
                             (row.level2 === 1) ?
-                              <CustomTableCell style={{width: "20%", fontSize: "20px", fontWeight: "600", background: "#fff59d", textAlign: "center", color:"#01579b", border: "1px solid black"}}>{row.price}</CustomTableCell>
+                              <CustomTableCell className={classes.body} style={{background: "#fff59d", color:"#01579b"}}>{row.price}</CustomTableCell>
                             :
-                              <CustomTableCell style={{width: "20%", fontSize: "20px", fontWeight: "600", background: "#9e9e9e", textAlign: "center", color:"#01579b", border: "1px solid black"}}>{row.price}</CustomTableCell>
+                              <CustomTableCell className={classes.body} style={{background: "#9e9e9e", color:"#01579b"}}>{row.price}</CustomTableCell>
                           )
                     }
-                    <CustomTableCell style={{width:"20%", fontSize:"20px", fontWeight:"600", background:"#f8bbd0", textAlign:"center", border:"1px solid black"}}>
+                    <CustomTableCell className={classes.body} style={{background:"#f8bbd0"}}>
                       {row.sell_vol > 0 ? row.sell_vol : ""}
                       </CustomTableCell>
-                    <CustomTableCell style={{width:"20%", fontSize:"20px", fontWeight:"600", background:"#f8bbd0", textAlign:"center", border:"1px solid black"}}>
+                    <CustomTableCell className={classes.body} style={{background:"#f8bbd0"}}>
                       {row.level2 > 0 ? row.level2 : ""}
                       </CustomTableCell>
                   </TableRow>

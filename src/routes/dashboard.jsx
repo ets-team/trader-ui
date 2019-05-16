@@ -7,6 +7,7 @@ import LocationOn from "@material-ui/icons/LocationOn";
 import Notifications from "@material-ui/icons/Notifications";
 import Unarchive from "@material-ui/icons/Unarchive";
 import InsertChartOutlined from "@material-ui/icons/InsertChartOutlined";
+import Launch from "@material-ui/icons/Launch";
 // core components/views
 import DashboardPage from "views/Dashboard/Dashboard.jsx";
 import UserProfile from "views/UserProfile/UserProfile.jsx";
@@ -17,14 +18,23 @@ import Maps from "views/Maps/Maps.jsx";
 import NotificationsPage from "views/Notifications/Notifications.jsx";
 import UpgradeToPro from "views/UpgradeToPro/UpgradeToPro.jsx";
 import MarketView from "views/Market/MarketView.jsx";
+import CreateOrder from "views/Order/CreateOrder.jsx";
+
 
 const dashboardRoutes = [
   {
     path: "/market",
-    sidebarName: "Market",
-    navbarName: "Market",
+    sidebarName: "MarketView",
+    navbarName: "MarketView",
     icon: InsertChartOutlined,
     component: MarketView
+  },
+  {
+    path: "/create",
+    sidebarName: "CreateOrder",
+    navbarName: "CreateOrder",
+    icon: Launch,
+    component: CreateOrder
   },
   {
     path: "/dashboard",
