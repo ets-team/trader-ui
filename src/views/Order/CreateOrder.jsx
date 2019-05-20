@@ -79,45 +79,39 @@ class CreateOrder extends React.Component {
     let candidates = this.handleItems(this.state.category);
     return(
         <div>
-          <GridContainer xs={12} sm={12} md={12}>
-            <GridItem xs={12} sm={12} md={12}>
-              <Card chart>
-                <CardHeader style={{background:"#37474f"}}>
-                </CardHeader>
-                <CardBody>
+          <Card chart>
+            <CardHeader style={{background:"#37474f"}}/>
+              <CardBody>
+                <GridContainer xs={12} sm={12} md={12}>
+                  <GridItem xs={12} sm={12} md={2}>
+                    <FormControl variant="outlined" className={classes.formControl}>
+                      <InputLabel>Category</InputLabel>
+                      <Select
+                          value={this.state.category}
+                          onChange={this.handleChangeCategory}
+                          input={<OutlinedInput/>}
+                      >
+                        <MenuItem value="Metal">Metal</MenuItem>
+                        <MenuItem value="Energy">Energy</MenuItem>
+                        <MenuItem value="Derivatives">Derivatives</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={2}>
+                    <FormControl variant="outlined" className={classes.formControl}>
+                      <InputLabel>Type</InputLabel>
+                      <Select
+                          value={this.state.type}
+                          onChange={this.handleChangeType}
+                          input={<OutlinedInput/>}
+                      >
+                        {candidates}
+                      </Select>
+                    </FormControl>
+                  </GridItem>
+                </GridContainer>
                 </CardBody>
               </Card>
-            </GridItem>
-          </GridContainer>
-          <GridContainer xs={12} sm={12} md={12}>
-            <GridItem xs={12} sm={12} md={2}>
-              <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel>Category</InputLabel>
-                <Select
-                    value={this.state.category}
-                    onChange={this.handleChangeCategory}
-                    input={<OutlinedInput/>}
-                >
-                  <MenuItem value="Metal">Metal</MenuItem>
-                  <MenuItem value="Energy">Energy</MenuItem>
-                  <MenuItem value="Derivatives">Derivatives</MenuItem>
-                </Select>
-              </FormControl>
-            </GridItem>
-            <GridItem xs={12} sm={12} md={2}>
-              <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel>Type</InputLabel>
-                <Select
-                    value={this.state.type}
-                    onChange={this.handleChangeType}
-                    input={<OutlinedInput/>}
-                >
-                  {candidates}
-
-                </Select>
-              </FormControl>
-            </GridItem>
-          </GridContainer>
 
         </div>
     )
