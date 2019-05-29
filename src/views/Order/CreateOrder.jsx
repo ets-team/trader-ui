@@ -2,9 +2,6 @@
  * Created by 励颖 on 2019/5/16.
  */
 import React from "react";
-import { DatePicker } from 'antd';
-import 'antd/lib/date-picker/style/css';
-import moment from 'moment';
 
 //@material-ui/core
 import { withStyles } from '@material-ui/core/styles';
@@ -52,8 +49,10 @@ const styles = theme => ({
     marginTop: "2%",
     width: '48%',
     marginLeft: '39%'
-  }
-
+  },
+  textField: {
+    width: 200,
+  },
 });
 
 const items = {
@@ -63,11 +62,6 @@ const items = {
   "Derivatives":["Copper Option", "Rubber Option"],
 };
 
-const {RangePicker} = DatePicker;
-
-function theDisabledDate(current){
-  return current && current > moment().endOf('day');
-}
 
 class CreateOrder extends React.Component {
   constructor(props) {
@@ -80,10 +74,11 @@ class CreateOrder extends React.Component {
       orderType:"",
       startMonth:"",
       endMonth:"",
-      mode: ['month', 'month'],
-      monthValue:[],
       price1: "",
       price2:"",
+      disable_price1: false,
+      disable_price2: false,
+      preview: false,
 
     }
   }
@@ -121,19 +116,28 @@ class CreateOrder extends React.Component {
     console.log(e.target.value);
     this.setState({
       orderType: e.target.value
+    });
+    if(e.target.value === "Market Order" || e.target.value === "Stop Order")
+      this.setState({
+        disable_price1: true,
+        disable_price2: true,
+      });
+    else if(e.target.value === "Limit Order")
+      this.setState({
+        disable_price2: true,
+      })
+  };
+
+  handleChangeStartMonth=(e)=>{
+    console.log(e.target.value);
+    this.setState({
+      startMonth: e.target.value
     })
   };
 
-  handlePanelChange = (value, mode) => {
+  handleChangeEndMonth=(e)=>{
     this.setState({
-      monthValue: value,
-      mode: [mode[0] === 'date' ? 'month' : mode[0], mode[1] === 'date' ? 'month' : mode[1]],
-    });
-  };
-
-  handleMonthChange=(value)=>{
-    this.setState({
-      monthValue: value
+      endMonth: e.target.value
     })
   };
 
@@ -142,14 +146,20 @@ class CreateOrder extends React.Component {
     this.setState({
       price1: e.target.value
     })
-  }
+  };
 
   handleChangePrice2=(e)=>{
     console.log(e.target.value);
     this.setState({
       price2: e.target.value
     })
-  }
+  };
+
+  handleChangeDialog=()=>{
+    this.setState({
+      preview: !this.state.preview
+    })
+  };
 
 
 
@@ -198,7 +208,7 @@ class CreateOrder extends React.Component {
                           onChange={this.handleChangeOrderType}
                           input={<OutlinedInput/>}
                       >
-                        <MenuItem value="buy">Order</MenuItem>
+                        <MenuItem value="Market Order">Market Order</MenuItem>
                         <MenuItem value="Limit Order">Limit Order</MenuItem>
                         <MenuItem value="Stop Order">Stop Order</MenuItem>
                         <MenuItem value="Cancel Order">Cancel Order</MenuItem>
@@ -243,18 +253,35 @@ class CreateOrder extends React.Component {
                       </Select>
                     </FormControl>
                   </GridItem>
-                  <GridItem xs={12} sm={12} md={8}>
+                  <GridItem xs={12} sm={12} md={2}>
                     <FormControl  className={classes.formControl} >
-                      <RangePicker
-                          className = {classes.picker}
-                          placeholder={['Start month', 'End month']}
-                          format="YYYY-MM"
-                          size="large"
-                          disabledDate={theDisabledDate}
-                          value={this.state.monthValue}
-                          mode={this.state.mode}
-                          onChange={this.handleMonthChange}
-                          onPanelChange={this.handlePanelChange}
+                      <TextField
+                          id="date"
+                          label="Start Month"
+                          type="month"
+                          defaultValue="2019-06"
+                          className={classes.textField}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          variant="outlined"
+                          onChange={this.handleChangeStartMonth}
+                      />
+                    </FormControl>
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={2}>
+                    <FormControl  className={classes.formControl} >
+                      <TextField
+                          id="date"
+                          label="End Month"
+                          type="month"
+                          defaultValue="2020-06"
+                          className={classes.textField}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          variant="outlined"
+                          onChange={this.handleChangeEndMonth}
                       />
                     </FormControl>
                   </GridItem>
@@ -291,6 +318,7 @@ class CreateOrder extends React.Component {
                           id="adornment-weight"
                           value={this.state.price1}
                           onChange={this.handleChangePrice1}
+                          disabled={this.state.disable_price1}
                           aria-describedby="weight-helper-text"
                           variant="outlined"
                           label="Expectation Price"
@@ -306,6 +334,7 @@ class CreateOrder extends React.Component {
                           id="adornment-weight"
                           value={this.state.price2}
                           onChange={this.handleChangePrice2}
+                          disabled={this.state.disable_price2r}
                           aria-describedby="weight-helper-text"
                           variant="outlined"
                           label="Limited Price"
@@ -320,11 +349,12 @@ class CreateOrder extends React.Component {
                 <br/>
                 <br/>
                 <br/>
+                <br/>
                 <GridContainer xs={12} sm={12} md={12}>
-                  <GridItem xs={12} sm={12} md={6}>
+                  <GridItem xs={12} sm={12} md={8}>
                   </GridItem>
                   <GridItem xs={12} sm={12} md={4}>
-                    <Button style={{background:"#546e7a", color:"white", marginLeft:'23%', fontSize:"16px"}}>预览订单</Button>
+                    <Button style={{background:"#546e7a", color:"white", marginLeft:'28%', fontSize:"16px"}}>预览订单</Button>
                     <Button style={{background:"#546e7a", color:"white", marginLeft:'2%', fontSize:"16px"}}>提交订单</Button>
                   </GridItem>
                 </GridContainer>
