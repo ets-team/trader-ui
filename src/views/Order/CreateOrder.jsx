@@ -2,7 +2,6 @@
  * Created by 励颖 on 2019/5/16.
  */
 import React from "react";
-
 //@material-ui/core
 import { withStyles } from '@material-ui/core/styles';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
@@ -13,13 +12,18 @@ import Select from '@material-ui/core/Select';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import Slide from "@material-ui/core/Slide";
+import TextField from "@material-ui/core/TextField";
 //components
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import Card from "components/Card/Card.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import CardBody from "components/Card/CardBody.jsx";
-import TextField from "@material-ui/core/es/TextField/TextField";
+import Snackbar from "components/Snackbar/Snackbar.jsx";
+//icons
+import ErrorOutline from "@material-ui/icons/ErrorOutline";
+import Done from "@material-ui/icons/Done";
 
 const styles = theme => ({
   root: {
@@ -37,13 +41,13 @@ const styles = theme => ({
     width:'100%',
   },
   divider:{
-    width:'100%',
-    marginLeft:"30%"
+    width:'80%',
+    marginLeft:"50%"
   },
   listHeader:{
     fontWeight: '700',
-    marginTop: '6%',
-    marginLeft: '15%'
+    marginTop: '4%',
+    marginLeft: '40%'
   },
   picker:{
     marginTop: "2%",
@@ -53,6 +57,10 @@ const styles = theme => ({
   textField: {
     width: 200,
   },
+  dateField:{
+    width:"100%",
+    marginTop:"18px"
+  }
 });
 
 const items = {
@@ -100,13 +108,23 @@ class CreateOrder extends React.Component {
 
   handleChangeOperation=(e)=>{
     console.log(e.target.value);
-    this.setState({
-      operation: e.target.value
-    })
+    if(e.target.value === "cancel" && this.state.orderType !== "Cancel Order" )
+    {
+      this.warning("Operation doesn't match with order type！");
+      this.setState({
+        operation:""
+      });
+    }
+    else
+      this.setState({
+        operation: e.target.value
+      })
   };
 
   handleChangeAmount=(e)=>{
     console.log(e.target.value);
+    if(isNaN(e.target.value))
+      this.warning("The amount you input is invalid！");
     this.setState({
       amount: e.target.value
     })
@@ -115,17 +133,23 @@ class CreateOrder extends React.Component {
   handleChangeOrderType=(e)=>{
     console.log(e.target.value);
     this.setState({
-      orderType: e.target.value
+      orderType: e.target.value,
+      operation:"",
     });
     if(e.target.value === "Market Order" || e.target.value === "Stop Order")
       this.setState({
         disable_price1: true,
         disable_price2: true,
+        operation:"",
       });
     else if(e.target.value === "Limit Order")
       this.setState({
         disable_price2: true,
-      })
+      });
+    else if (e.target.value === "Cancel Order")
+      this.setState({
+        operation: "cancel"
+      });
   };
 
   handleChangeStartMonth=(e)=>{
@@ -143,6 +167,8 @@ class CreateOrder extends React.Component {
 
   handleChangePrice1=(e)=>{
     console.log(e.target.value);
+    if(isNaN(e.target.value))
+      this.warning("The Expectation Price you input is invalid！");
     this.setState({
       price1: e.target.value
     })
@@ -150,6 +176,8 @@ class CreateOrder extends React.Component {
 
   handleChangePrice2=(e)=>{
     console.log(e.target.value);
+    if(isNaN(e.target.value))
+      this.warning("The Limited Price you input is invalid！");
     this.setState({
       price2: e.target.value
     })
@@ -173,6 +201,47 @@ class CreateOrder extends React.Component {
     return result;
   };
 
+  Transition(props) {
+    return <Slide direction="up" {...props} />;
+  }
+
+  typeToIcon = (type) => {
+    if (type === "success")
+      return Done;
+    if (type === "danger")
+      return ErrorOutline;
+    return null;
+  };
+
+  success = (msg) => {
+    this.setState({
+      notificationType: "success",
+      notificationMessage: msg
+    });
+    this.showNotification("br");
+  };
+
+  warning = (msg) => {
+    this.setState({
+      notificationType: "danger",
+      notificationMessage: msg
+    });
+    this.showNotification("br");
+  };
+
+  showNotification = (place) => {
+    let x = [];
+    x[place] = true;
+    this.setState({[place]: true});
+    this.alertTimeout = setTimeout(
+        function() {
+          x[place] = false;
+          this.setState(x);
+        }.bind(this),
+        2000
+    );
+  };
+
   render(){
     const {classes} = this.props;
     let candidates = this.handleItems(this.state.category);
@@ -184,21 +253,8 @@ class CreateOrder extends React.Component {
                 <br/>
                 <h4/>
                 <GridContainer xs={12} sm={12} md={12}>
-                  <GridItem xs={12} sm={12} md={3}>
+                  <GridItem xs={12} sm={12} md={4}>
                     <h3 className={classes.listHeader}>Order Info</h3>
-                  </GridItem>
-                  <GridItem xs={12} sm={12} md={2}>
-                    <FormControl variant="outlined" className={classes.formControl}>
-                      <InputLabel>Operation</InputLabel>
-                      <Select
-                          value={this.state.operation}
-                          onChange={this.handleChangeOperation}
-                          input={<OutlinedInput/>}
-                      >
-                        <MenuItem value="buy">Buy</MenuItem>
-                        <MenuItem value="sell">Sell</MenuItem>
-                      </Select>
-                    </FormControl>
                   </GridItem>
                   <GridItem xs={12} sm={12} md={2}>
                     <FormControl variant="outlined" className={classes.formControl}>
@@ -215,6 +271,20 @@ class CreateOrder extends React.Component {
                       </Select>
                     </FormControl>
                   </GridItem>
+                  <GridItem xs={12} sm={12} md={2}>
+                    <FormControl variant="outlined" className={classes.formControl}>
+                      <InputLabel>Operation</InputLabel>
+                      <Select
+                          value={this.state.operation}
+                          onChange={this.handleChangeOperation}
+                          input={<OutlinedInput/>}
+                      >
+                        <MenuItem value="buy">Buy</MenuItem>
+                        <MenuItem value="sell">Sell</MenuItem>
+                        <MenuItem value="cancel">Cancel</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </GridItem>
                 </GridContainer>
                 <br/>
                 <GridContainer xs={12} sm={12} md={12}>
@@ -224,7 +294,7 @@ class CreateOrder extends React.Component {
                 </GridContainer>
                 <br/>
                 <GridContainer xs={12} sm={12} md={12}>
-                  <GridItem xs={12} sm={12} md={3}>
+                  <GridItem xs={12} sm={12} md={4}>
                     <h3 className={classes.listHeader}>Product Info</h3>
                   </GridItem>
                   <GridItem xs={12} sm={12} md={2}>
@@ -253,14 +323,17 @@ class CreateOrder extends React.Component {
                       </Select>
                     </FormControl>
                   </GridItem>
+                </GridContainer>
+                <GridContainer xs={12} sm={12} md={12}>
+                  <GridItem xs={12} sm={12} md={4}/>
                   <GridItem xs={12} sm={12} md={2}>
                     <FormControl  className={classes.formControl} >
                       <TextField
                           id="date"
                           label="Start Month"
                           type="month"
-                          defaultValue="2019-06"
-                          className={classes.textField}
+                          defaultValue="2019-07"
+                          className={classes.dateField}
                           InputLabelProps={{
                             shrink: true,
                           }}
@@ -276,7 +349,7 @@ class CreateOrder extends React.Component {
                           label="End Month"
                           type="month"
                           defaultValue="2020-06"
-                          className={classes.textField}
+                          className={classes.dateField}
                           InputLabelProps={{
                             shrink: true,
                           }}
@@ -294,7 +367,7 @@ class CreateOrder extends React.Component {
                 </GridContainer>
                 <br/>
                 <GridContainer xs={12} sm={12} md={12}>
-                  <GridItem xs={12} sm={12} md={3}>
+                  <GridItem xs={12} sm={12} md={4}>
                     <h3 className={classes.listHeader}>Trading Info</h3>
                   </GridItem>
                   <GridItem xs={12} sm={12} md={2}>
@@ -334,7 +407,7 @@ class CreateOrder extends React.Component {
                           id="adornment-weight"
                           value={this.state.price2}
                           onChange={this.handleChangePrice2}
-                          disabled={this.state.disable_price2r}
+                          disabled={this.state.disable_price2}
                           aria-describedby="weight-helper-text"
                           variant="outlined"
                           label="Limited Price"
@@ -354,13 +427,22 @@ class CreateOrder extends React.Component {
                   <GridItem xs={12} sm={12} md={8}>
                   </GridItem>
                   <GridItem xs={12} sm={12} md={4}>
-                    <Button style={{background:"#546e7a", color:"white", marginLeft:'28%', fontSize:"16px"}}>预览订单</Button>
+                    <Button style={{background:"#546e7a", color:"white", marginLeft:'-2%',fontSize:"16px"}}>预览订单</Button>
                     <Button style={{background:"#546e7a", color:"white", marginLeft:'2%', fontSize:"16px"}}>提交订单</Button>
                   </GridItem>
                 </GridContainer>
                 <br/>
                 </CardBody>
               </Card>
+          <Snackbar
+              place="br"
+              color={this.state.notificationType}
+              icon={this.typeToIcon(this.state.notificationType)}
+              message={this.state.notificationMessage}
+              open={this.state.br}
+              closeNotification={() => this.setState({ br: false })}
+              close
+          />
         </div>
     )
   }

@@ -190,8 +190,7 @@ class MarketView extends React.Component {
     this.state = {
       productName:"Gold",
       period:"SEP16",
-      rows:[
-        {
+      rows:[{
           level1: "",
           buy_vol: "",
           price: 1254,
