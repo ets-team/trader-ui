@@ -14,6 +14,10 @@ import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Slide from "@material-ui/core/Slide";
 import TextField from "@material-ui/core/TextField";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import IconButton from '@material-ui/core/IconButton';
 //components
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
@@ -24,6 +28,9 @@ import Snackbar from "components/Snackbar/Snackbar.jsx";
 //icons
 import ErrorOutline from "@material-ui/icons/ErrorOutline";
 import Done from "@material-ui/icons/Done";
+import CloseIcon from '@material-ui/icons/Close';
+//views
+import OrderView from "views/Order/OrderView.jsx";
 
 const styles = theme => ({
   root: {
@@ -60,6 +67,10 @@ const styles = theme => ({
   dateField:{
     width:"100%",
     marginTop:"18px"
+  },
+  h3:{
+    textAlign: "center",
+    fontWeight: "700"
   }
 });
 
@@ -87,7 +98,6 @@ class CreateOrder extends React.Component {
       disable_price1: false,
       disable_price2: false,
       preview: false,
-
     }
   }
 
@@ -185,11 +195,13 @@ class CreateOrder extends React.Component {
 
   handleChangeDialog=()=>{
     this.setState({
-      preview: !this.state.preview
+      preview: !this.state.preview,
     })
   };
 
+  handleCommitOrder=()=>{
 
+  };
 
   handleItems=(category)=>{
     let selections = items[category];
@@ -200,6 +212,8 @@ class CreateOrder extends React.Component {
       )
     return result;
   };
+
+
 
   Transition(props) {
     return <Slide direction="up" {...props} />;
@@ -279,9 +293,9 @@ class CreateOrder extends React.Component {
                           onChange={this.handleChangeOperation}
                           input={<OutlinedInput/>}
                       >
-                        <MenuItem value="buy">Buy</MenuItem>
-                        <MenuItem value="sell">Sell</MenuItem>
-                        <MenuItem value="cancel">Cancel</MenuItem>
+                        <MenuItem value="Buy">Buy</MenuItem>
+                        <MenuItem value="Sell">Sell</MenuItem>
+                        <MenuItem value="Cancel">Cancel</MenuItem>
                       </Select>
                     </FormControl>
                   </GridItem>
@@ -424,16 +438,55 @@ class CreateOrder extends React.Component {
                 <br/>
                 <br/>
                 <GridContainer xs={12} sm={12} md={12}>
-                  <GridItem xs={12} sm={12} md={8}>
-                  </GridItem>
+                  <GridItem xs={12} sm={12} md={7}/>
                   <GridItem xs={12} sm={12} md={4}>
-                    <Button style={{background:"#546e7a", color:"white", marginLeft:'-2%',fontSize:"16px"}}>预览订单</Button>
-                    <Button style={{background:"#546e7a", color:"white", marginLeft:'2%', fontSize:"16px"}}>提交订单</Button>
+                    <Button
+                        style={{
+                          background:"#546e7a",
+                          color:"white",
+                          marginLeft:'-5%',
+                          fontSize:"16px"
+                        }}
+                        onClick={this.handleChangeDialog}
+                    >
+                      Preview Order
+                    </Button>
+                    <Button
+                        style={{
+                          background:"#546e7a",
+                          color:"white",
+                          marginLeft:'2%',
+                          fontSize:"16px"
+                        }}
+                        onClick={this.handleCommitOrder}
+                    >
+                      Commit Order
+                    </Button>
                   </GridItem>
                 </GridContainer>
                 <br/>
                 </CardBody>
               </Card>
+          <Dialog
+              open={this.state.preview}
+              onClose={this.handleChangeDialog}
+              maxWidth='sm'
+              fullWidth={true}
+          >
+            <DialogActions>
+              <IconButton  onClick={this.handleChangeDialog}>
+                <CloseIcon />
+              </IconButton>
+            </DialogActions>
+            <DialogContent>
+              <h3 className={classes.h3}>Check Order Content</h3>
+              <OrderView orderType={this.state.orderType} amount={this.state.amount}
+                        type={this.state.type} operation={this.state.operation}
+                        broker="M"/>
+              <br/>
+              <br/>
+            </DialogContent>
+          </Dialog>
           <Snackbar
               place="br"
               color={this.state.notificationType}
