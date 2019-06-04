@@ -14,7 +14,7 @@ import UpgradeToPro from "views/UpgradeToPro/UpgradeToPro.jsx";
 import MarketView from "views/Market/MarketView.jsx";
 import CreateOrder from "views/Order/CreateOrder.jsx";
 
-const dashboardRoutes = [
+export const dashboardRoutes = [
   {
     path: "/market",
     sidebarName: "MarketView",
@@ -60,4 +60,7 @@ const dashboardRoutes = [
   { redirect: true, path: "/", to: "/market", navbarName: "Redirect" }
 ];
 
-export default dashboardRoutes;
+let routesNotInSideBar = [];
+
+export const deepRoutes = routesNotInSideBar.concat(dashboardRoutes);
+

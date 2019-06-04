@@ -9,9 +9,9 @@ import Button from '@material-ui/core/Button';
 const styles = theme => ({
   table:{
     border: '2px solid black',
-    width: '330px',
+    width: '430px',
     borderCollapse: 'collapse',
-    marginLeft: '20%'
+    marginLeft: '10%'
   },
   tableHead:{
     background: '#40c4ff',
@@ -31,12 +31,12 @@ const styles = theme => ({
     border: '2px solid black',
   },
   span:{
-    fontSize: '20px',
+    fontSize: '18px',
     fontWeight: '500',
   },
   button:{
     fontSize: '18px',
-    color: '#bf360c',
+    color: '#e91e63',
     fontWeight: '700',
     width: '18%',
   }
@@ -61,22 +61,40 @@ class OrderView extends React.Component {
     return(
         <div>
           <table className={classes.table}>
-            <tr className={classes.tableHead}>&nbsp;&nbsp;&nbsp;{this.props.orderType}</tr>
-            <tr className={classes.tr}>&nbsp;&nbsp;&nbsp;{this.props.operation}&nbsp;{this.props.type}</tr>
-            <tr className={classes.tr}>&nbsp;&nbsp;&nbsp;Qty: {this.props.amount}</tr>
-            <tr className={classes.tr}>&nbsp;&nbsp;&nbsp;Broker&nbsp;{this.props.broker}</tr>
-            <tr className={classes.tr}>
-              <Checkbox
-                  checked={this.state.checked}
-                  onChange={this.handleChangeCheck}
-                  value={this.state.checked}
-              />
-              <span className={classes.span}>I confirm the trade is correct</span>
+            <tr className={classes.tableHead}>
+              <td>&nbsp;&nbsp;&nbsp;{this.props.orderType}</td>
+              <td/>
             </tr>
             <tr className={classes.tr}>
-              <Button className={classes.button} >OK</Button>
-              <span style={{width: '0%', height:"35px", borderLeft: '10px'}}/>
-              <Button className={classes.button} style={{marginLeft:"50%"}}>Cancel</Button>
+              <td>&nbsp;&nbsp;&nbsp;{this.props.operation}&nbsp;{this.props.type}</td>
+              <td/>
+            </tr>
+            <tr className={classes.tr}>
+              <td>&nbsp;&nbsp;&nbsp;Qty: {this.props.amount}</td>
+              <td>&nbsp;&nbsp;&nbsp;Price: {this.props.price}</td>
+            </tr>
+            <tr className={classes.tr}>
+              <td>&nbsp;&nbsp;&nbsp;Broker&nbsp;{this.props.broker}</td>
+              <td/>
+            </tr>
+            <tr className={classes.tr}>
+              <td>
+                <Checkbox
+                    checked={this.state.checked}
+                    onChange={this.handleChangeCheck}
+                    value={this.state.checked}
+                />
+                <span className={classes.span}>I confirm the trade is correct</span>
+              </td>
+              <td/>
+            </tr>
+            <tr className={classes.tr}>
+              <td>
+                <Button className={classes.button} >OK</Button>
+              </td>
+              <td>
+                <Button className={classes.button} style={{marginLeft:"0%"}}>Cancel</Button>
+              </td>
             </tr>
           </table>
         </div>

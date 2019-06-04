@@ -17,6 +17,7 @@ import TextField from "@material-ui/core/TextField";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 //components
 import GridItem from "components/Grid/GridItem.jsx";
@@ -49,7 +50,7 @@ const styles = theme => ({
   },
   divider:{
     width:'80%',
-    marginLeft:"50%"
+    marginLeft:'50%'
   },
   listHeader:{
     fontWeight: '700',
@@ -68,9 +69,10 @@ const styles = theme => ({
     width:"100%",
     marginTop:"18px"
   },
-  h3:{
-    textAlign: "center",
-    fontWeight: "700"
+  dialogTitle:{
+    fontWeight: "700",
+    fontSize: '24px',
+    marginLeft: '5%'
   }
 });
 
@@ -287,7 +289,7 @@ class CreateOrder extends React.Component {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={2}>
                     <FormControl variant="outlined" className={classes.formControl}>
-                      <InputLabel>Operation</InputLabel>
+                      <InputLabel>Buy / Sell</InputLabel>
                       <Select
                           value={this.state.operation}
                           onChange={this.handleChangeOperation}
@@ -473,16 +475,25 @@ class CreateOrder extends React.Component {
               maxWidth='sm'
               fullWidth={true}
           >
+
             <DialogActions>
               <IconButton  onClick={this.handleChangeDialog}>
                 <CloseIcon />
               </IconButton>
             </DialogActions>
             <DialogContent>
-              <h3 className={classes.h3}>Check Order Content</h3>
-              <OrderView orderType={this.state.orderType} amount={this.state.amount}
-                        type={this.state.type} operation={this.state.operation}
+              <div>
+                <h3 className={classes.dialogTitle}>Check Order Content</h3>
+              </div>
+              <div>
+                <Divider />
+              </div>
+              <br/>
+              <div>
+                <OrderView orderType={this.state.orderType} amount={this.state.amount}
+                        type={this.state.type} operation={this.state.operation} price={this.state.price1}
                         broker="M"/>
+              </div>
               <br/>
               <br/>
             </DialogContent>
