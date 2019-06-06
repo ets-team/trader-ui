@@ -78,29 +78,56 @@ class LoginPage extends React.Component {
   handleChange = (e) => {
     e.preventDefault();
     this.setState({ [e.target.name]: e.target.value });
-    console.log(e.target.value);
+   // console.log(e.target.value);
   };
 
   handleLogin = e => {
     e.preventDefault();
-    console.log("hello");
-    console.log(this.state.username);
-      console.log(this.state.password);
-    if(this.state.username !== "root")
-        alert("用户名不正确");
-    else if(this.state.password !== "123456")
-        alert("密码错误");
-    else
-    {
-      console.log("success");
-      alert("登录成功");
-      cookies.set("login", true, { path: "/" });
-      cookies.set("username", this.state.username, { path: "/" });
-      cookies.set("userId", "0001", { path: "/" });
-      window.location.href = "/";
-    }
+    fetch('http://202.120.40.8:30401/trader/login/'+ this.state.username + '/' + this.state.password,
+      {
+        method: 'POST',
+        mode: 'cors',
+      })
+    .then(response => {
+      console.log('Request successful', response);
+      //console.log("status:",response.status);
+      return response.text()
+          .then(result => {
+            console.log(result);
+            if(response.status === 500)
+            {
+              this.warning("The username doesn't exit！");
+              this.setState({
+                username: "",
+              },()=>{
+                this.forceUpdate();
+              });
+            }
+            else if(response.status === 200)
+            {
+              if(result === "fail")
+              {
+                this.warning("The password is wrong. Please retype it！");
+                this.setState({password:""},()=>{
+                  this.forceUpdate();
+                });
+              }
+              else if(result === "success")//success
+              {
+                this.success("Login successfully！");
 
-
+                cookies.set("login", true, { path: "/" });
+                cookies.set("username", this.state.username, { path: "/" });
+                this.setState({
+                  username:"",
+                  password:"",
+                },()=>{
+                  window.location.href = "/";
+                });
+              }
+            }
+        })
+    })
   };
 
   showNotification = () => {
@@ -145,7 +172,7 @@ class LoginPage extends React.Component {
             <Person />
           </Avatar>
           <br/>
-          <Typography component="h1" variant="h5" style={{fontWeight:'600', color:"#455a64"}}>
+          <Typography component="h1" variant="h5" style={{fontWeight:'500', color:"#455a64"}}>
             Future Trading System
           </Typography>
           <form className={classes.form}>

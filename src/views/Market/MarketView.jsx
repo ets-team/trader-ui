@@ -290,6 +290,8 @@ class MarketView extends React.Component {
     let candidates = this.handleItems(this.state.category);
     return (
     <div >
+      <br/>
+      <br/>
       <Card chart>
         <CardHeader style={{background:"#37474f"}}/>
         <CardBody>
