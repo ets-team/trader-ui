@@ -263,7 +263,10 @@ class CreateOrder extends React.Component {
     let candidates = this.handleItems(this.state.category);
     return(
         <div>
-          <Card chart>
+          <br/>
+          <br/>
+          <br/>
+          <Card >
             <CardHeader style={{background:"#37474f"}}/>
               <CardBody>
                 <br/>
@@ -434,8 +437,6 @@ class CreateOrder extends React.Component {
                     </FormControl>
                   </GridItem>
                 </GridContainer>
-                <br/>
-                <br/>
                 <br/>
                 <br/>
                 <br/>

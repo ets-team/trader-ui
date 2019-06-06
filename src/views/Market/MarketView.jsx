@@ -13,6 +13,11 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
 //@material-ui/icons
 import Search from "@material-ui/icons/Search";
 import ArrowUpward from "@material-ui/icons/ArrowUpward";
@@ -30,6 +35,7 @@ const styles = theme => ({
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
+    marginTop:"20px"
   },
   header:{
     width:"20%",
@@ -116,7 +122,11 @@ const styles = theme => ({
       color: "#777",
       fontWeight: "400",
       lineHeight: "1"
-    }
+    },
+    formControl: {
+      margin: theme.spacing.unit,
+      width:'500%',
+    },
   }
 });
 
@@ -184,12 +194,20 @@ const dailySalesChart = {
   }
 };
 
+const items = {
+  "":[],
+  "Metal":["Gold", "Silver", "Copper", "Aluminium", "Zinc", "Lead", "Nickel", "Tin"],
+  "Energy":["Crude Oil", "Fuel Oil", "Pitch", "Rubber"],
+  "Derivatives":["Copper Option", "Rubber Option"],
+};
+
 class MarketView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      productName:"Gold",
-      period:"SEP16",
+      type:"",
+      period:"",
+      category:"",
       rows:[{
           level1: "",
           buy_vol: "",
@@ -235,11 +253,18 @@ class MarketView extends React.Component {
       ],
     };
   }
-
-  handleChangeProductName=(e)=>{
+  handleChangeCategory=(e)=>{
     console.log(e.target.value);
     this.setState({
-      productName:e.target.value
+      category: e.target.value,
+      type:""
+    })
+  };
+
+  handleChangeType=(e)=>{
+    console.log(e.target.value);
+    this.setState({
+      type:e.target.value
     })
   };
 
@@ -250,46 +275,74 @@ class MarketView extends React.Component {
     })
   };
 
+  handleItems=(category)=>{
+    let selections = items[category];
+    let result = [];
+    for(let i=0; i<selections.length; i++)
+      result.push(
+          <MenuItem value={selections[i]}>{selections[i]}</MenuItem>
+      )
+    return result;
+  };
+
   render() {
     const {classes} = this.props;
+    let candidates = this.handleItems(this.state.category);
     return (
     <div >
       <Card chart>
         <CardHeader style={{background:"#37474f"}}/>
         <CardBody>
           <GridContainer xs={12} sm={12} md={12}>
-            <GridItem xs={12} sm={12} md={3}>
-              <TextField
-                  id="theme"
-                  label="Product Name"
-                  fullWidth
-                  value={this.state.productName}
-                  onChange={()=>this.handleChangeProductName}
-                  className={classes.textField}
-                  margin="normal"
-                  variant="outlined"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-              />
+            <GridItem xs={12} sm={12} md={12}>
+              <h6>Please choose a product:</h6>
+            </GridItem>
+          </GridContainer>
+          <GridContainer xs={12} sm={12} md={12}>
+            <GridItem xs={12} sm={12} md={1} />
+            <GridItem xs={12} sm={12} md={2}>
+              <FormControl variant="outlined"  style={{width:'100%', marginTop:"-30px"}}>
+                <InputLabel>Category</InputLabel>
+                <Select
+                    value={this.state.category}
+                    onChange={this.handleChangeCategory}
+                    input={<OutlinedInput/>}
+
+                >
+                  <MenuItem value="Metal">Metal</MenuItem>
+                  <MenuItem value="Energy">Energy</MenuItem>
+                  <MenuItem value="Derivatives">Derivatives</MenuItem>
+                </Select>
+              </FormControl>
+            </GridItem>
+            <GridItem xs={12} sm={12} md={2}>
+              <FormControl variant="outlined" style={{width:'100%', marginTop:'-30px'}}>
+                <InputLabel>Type</InputLabel>
+                <Select
+                    value={this.state.type}
+                    onChange={this.handleChangeType}
+                    input={<OutlinedInput/>}
+                >
+                  {candidates}
+                </Select>
+              </FormControl>
+            </GridItem>
+            <GridItem xs={12} sm={12} md={2}>
+                <FormControl variant="outlined"  style={{width:'100%', marginTop:'-30px'}}>
+                  <InputLabel>Period</InputLabel>
+                  <Select
+                      value={this.state.period}
+                      onChange={this.handleChangePeriod}
+                      input={<OutlinedInput/>}
+                  >
+                    <MenuItem value="SEP16">SEP16</MenuItem>
+                    <MenuItem value="OCT14">OCT14</MenuItem>
+                    <MenuItem value="NOV18">NOV18</MenuItem>
+                  </Select>
+                </FormControl>
             </GridItem>
             <GridItem xs={12} sm={12} md={3}>
-              <TextField
-                  id="theme"
-                  label="Period"
-                  fullWidth
-                  value={this.state.period}
-                  onChange={()=>this.handleChangePeriod}
-                  className={classes.textField}
-                  margin="normal"
-                  variant="outlined"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-              />
-            </GridItem>
-            <GridItem xs={12} sm={12} md={3}>
-              <Button style={{background:"#37474f", color:"white", fontSize:"18px", marginTop:"7%"}}>
+              <Button style={{background:"#37474f", color:"white", fontSize:"18px", marginTop:"-3%"}}>
                 <Search/>&nbsp;&nbsp;Search
               </Button>
             </GridItem>
@@ -299,10 +352,10 @@ class MarketView extends React.Component {
               <br/>
             </GridItem>
             <GridItem xs={12} sm={12} md={8}>
-              <h3 style={{fontWeight:"700", color:"#37474f", marginLeft:"5%"}}>Market Depth of {this.state.productName} {this.state.period}:</h3>
+              <h3 style={{fontWeight:"700", color:"#37474f", marginLeft:"5%"}}>Market Depth of {this.state.type} {this.state.period}:</h3>
             </GridItem>
             <GridItem xs={12} sm={12} md={4}>
-              <h3 style={{fontWeight:"700", color:"#37474f", marginLeft:"5%"}}>Daily Trend of {this.state.productName} {this.state.period}:</h3>
+              <h3 style={{fontWeight:"700", color:"#37474f", marginLeft:"5%"}}>Daily Trend of {this.state.type} {this.state.period}:</h3>
             </GridItem>
             <GridItem xs={12} sm={12} md={8}>
                   <br/>

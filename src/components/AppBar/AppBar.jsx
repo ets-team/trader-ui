@@ -238,7 +238,7 @@ class PrimarySearchAppBar extends React.Component {
         <div className={classes.root}>
               <AppBar position="absolute" style={{boxShadow:"0px 0px 0px #BDBDBD"}} >
 
-                  <Toolbar  style={{background:"#FAFAFA"}}>
+                  <Toolbar  style={{background:"#EEEEEE"}}>
                       <div className={classes.search} style={{marginLeft:"68%" }}>
                             <TextField  placeholder="Search..." margin="normal" onChange={this.handleContentChange} />
 

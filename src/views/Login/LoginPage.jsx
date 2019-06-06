@@ -54,8 +54,12 @@ const styles = theme => ({
     },
     submit: {
         marginTop: theme.spacing.unit * 3,
+        background: '#607d8b'
     },
-
+    register: {
+      marginTop: theme.spacing.unit * 3,
+      background: '#b0bec5'
+    },
 });
 
 class LoginPage extends React.Component {
@@ -141,7 +145,7 @@ class LoginPage extends React.Component {
             <Person />
           </Avatar>
           <br/>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" style={{fontWeight:'600', color:"#455a64"}}>
             Future Trading System
           </Typography>
           <form className={classes.form}>
@@ -183,13 +187,21 @@ class LoginPage extends React.Component {
             </FormControl>
             <br/>
             <Button
-              style={{width: '25%', marginLeft: '35%'}}
+              style={{width: '25%', marginLeft: '23%'}}
               variant="contained"
               color="primary"
               className={classes.submit}
               onClick={this.handleLogin}
             >
-              登录
+              Login
+            </Button>
+            <Button
+                style={{width: '25%', marginLeft: '5%'}}
+                variant="contained"
+                color="primary"
+                className={classes.register}
+            >
+              Register
             </Button>
           </form>
         </Paper>

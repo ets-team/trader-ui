@@ -22,6 +22,8 @@ class CustomTabs extends React.Component {
 
   handleChange = (event, value) => {
     this.setState({ value });
+    //console.log(this.props.tabs[value].tabName);
+    this.props.handleSecondNavbar(this.props.tabs[value].tabName);
   };
 
   render() {
@@ -31,6 +33,7 @@ class CustomTabs extends React.Component {
       plainTabs,
       tabs,
       title,
+      style,
       rtlActive
     } = this.props;
     const cardTitle = classNames({
@@ -38,55 +41,56 @@ class CustomTabs extends React.Component {
       [classes.cardTitleRTL]: rtlActive
     });
     return (
-      <Card plain={plainTabs}>
-        <CardHeader color={headerColor} plain={plainTabs}>
-          {title !== undefined ? (
-            <div className={cardTitle}>{title}</div>
-          ) : null}
-          <Tabs
-            value={this.state.value}
-            onChange={this.handleChange}
-            classes={{
-              root: classes.tabsRoot,
-              indicator: classes.displayNone,
-              scrollButtons: classes.displayNone
-            }}
-            scrollable
-            scrollButtons="auto"
-          >
+        <Card plain={plainTabs} >
+          <CardHeader color={headerColor} plain={plainTabs} style={style}>
+            {title !== undefined ? (
+                <div className={cardTitle}>{title}</div>
+            ) : null}
+            <Tabs
+                value={this.state.value}
+                onChange={this.handleChange}
+                classes={{
+                  root: classes.tabsRoot,
+                  indicator: classes.displayNone,
+                  scrollButtons: classes.displayNone
+                }}
+                scrollable
+                scrollButtons="auto"
+            >
+              {tabs.map((prop, key) => {
+                var icon = {};
+                if (prop.tabIcon) {
+                  icon = {
+                    icon: <prop.tabIcon />
+                  };
+                }
+                return (
+                    <Tab
+                        classes={{
+                          root: classes.tabRootButton,
+                          labelContainer: classes.tabLabelContainer,
+                          label: classes.tabLabel,
+                          selected: classes.tabSelected,
+                          wrapper: classes.tabWrapper
+                        }}
+                        key={key}
+
+                        label={prop.tabName}
+                        {...icon}
+                    />
+                );
+              })}
+            </Tabs>
+          </CardHeader>
+          <CardBody>
             {tabs.map((prop, key) => {
-              var icon = {};
-              if (prop.tabIcon) {
-                icon = {
-                  icon: <prop.tabIcon />
-                };
+              if (key === this.state.value) {
+                return <div key={key}>{prop.tabContent}</div>;
               }
-              return (
-                <Tab
-                  classes={{
-                    root: classes.tabRootButton,
-                    labelContainer: classes.tabLabelContainer,
-                    label: classes.tabLabel,
-                    selected: classes.tabSelected,
-                    wrapper: classes.tabWrapper
-                  }}
-                  key={key}
-                  label={prop.tabName}
-                  {...icon}
-                />
-              );
+              return null;
             })}
-          </Tabs>
-        </CardHeader>
-        <CardBody>
-          {tabs.map((prop, key) => {
-            if (key === this.state.value) {
-              return <div key={key}>{prop.tabContent}</div>;
-            }
-            return null;
-          })}
-        </CardBody>
-      </Card>
+          </CardBody>
+        </Card>
     );
   }
 }
@@ -102,11 +106,11 @@ CustomTabs.propTypes = {
   ]),
   title: PropTypes.string,
   tabs: PropTypes.arrayOf(
-    PropTypes.shape({
-      tabName: PropTypes.string.isRequired,
-      tabIcon: PropTypes.func,
-      tabContent: PropTypes.node.isRequired
-    })
+      PropTypes.shape({
+        tabName: PropTypes.string.isRequired,
+        tabIcon: PropTypes.func,
+        tabContent: PropTypes.node.isRequired
+      })
   ),
   rtlActive: PropTypes.bool,
   plainTabs: PropTypes.bool
