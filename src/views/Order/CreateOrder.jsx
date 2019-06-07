@@ -148,19 +148,22 @@ class CreateOrder extends React.Component {
       orderType: e.target.value,
       operation:"",
     });
-    if(e.target.value === "Market Order" || e.target.value === "Stop Order")
+    if(e.target.value === "Market Order" )
       this.setState({
         disable_price1: true,
         disable_price2: true,
         operation:"",
       });
-    else if(e.target.value === "Limit Order")
+    else if(e.target.value === "Limit Order" || e.target.value === "Stop Order")
       this.setState({
+        disable_price1: false,
         disable_price2: true,
       });
     else if (e.target.value === "Cancel Order")
       this.setState({
-        operation: "cancel"
+        operation: "cancel",
+        disable_price1: true,
+        disable_price2: true,
       });
   };
 
@@ -269,8 +272,7 @@ class CreateOrder extends React.Component {
           <Card >
             <CardHeader style={{background:"#37474f"}}/>
               <CardBody>
-                <br/>
-                <h4/>
+                <h4/><br/>
                 <GridContainer xs={12} sm={12} md={12}>
                   <GridItem xs={12} sm={12} md={4}>
                     <h3 className={classes.listHeader}>Order Info</h3>

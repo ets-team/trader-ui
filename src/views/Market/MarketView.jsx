@@ -30,6 +30,9 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import CardIcon from "components/Card/CardIcon.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const styles = theme => ({
   textField: {
@@ -201,6 +204,8 @@ const items = {
   "Derivatives":["Copper Option", "Rubber Option"],
 };
 
+let websocket = null;
+
 class MarketView extends React.Component {
   constructor(props) {
     super(props);
@@ -208,51 +213,31 @@ class MarketView extends React.Component {
       type:"",
       period:"",
       category:"",
-      rows:[{
-          level1: "",
-          buy_vol: "",
-          price: 1254,
-          sell_vol: 127,
-          level2: 3,
-        },
-        {
-          level1: "",
-          buy_vol: "",
-          price: 1252,
-          sell_vol: 32,
-          level2: 2,
-        },
-        {
-          level1: "",
-          buy_vol: "",
-          price: 1250,
-          sell_vol: 50,
-          level2: 1,
-        },
-        {
-          level1: 1,
-          buy_vol: 90,
-          price: 1248,
-          sell_vol: -1,
-          level2: -1,
-        },
-        {
-          level1: 2,
-          buy_vol: 340,
-          price: 1246,
-          sell_vol: -1,
-          level2: -1,
-        },
-        {
-          level1: 3,
-          buy_vol: 187,
-          price: 1244,
-          sell_vol: -1,
-          level2: -1,
-        }
-      ],
+      rows:[{level1: "", buy_vol: "", price: 1254, sell_vol: 127, level2: 3,},
+            {level1: "", buy_vol: "", price: 1252, sell_vol: 32, level2: 2,},
+            {level1: "", buy_vol: "", price: 1250, sell_vol: 50, level2: 1,},
+            {level1: 1, buy_vol: 90, price: 1248, sell_vol: -1, level2: -1,},
+            {level1: 2, buy_vol: 340, price: 1246, sell_vol: -1, level2: -1,},
+            {level1: 3, buy_vol: 187, price: 1244, sell_vol: -1, level2: -1,}],
     };
+    //console.log(cookies.get("username"));
+    let site = "ws://202.120.40.8:30401/chat/"+cookies.get("username");
+    if("WebSocket" in window){
+      websocket = new WebSocket(site);
+    }else{
+      alert("Not support websocket");
+    }
+
+    websocket.onopen = function(event){
+      console.log("建立连接成功！");
+    };
+
+    websocket.onmessage = function(event){
+      console.log(event.data);
+    };
+
   }
+
   handleChangeCategory=(e)=>{
     console.log(e.target.value);
     this.setState({
@@ -285,6 +270,31 @@ class MarketView extends React.Component {
     return result;
   };
 
+  searchDepth=()=>{
+    let receiver = "user";
+    let futureId = 0;
+    let msg = "bye";
+    let socketMsg = {msg:msg, toUser:receiver, type:1};
+
+    if(websocket) {
+      console.log("hello");
+      websocket.send(JSON.stringify(socketMsg));
+    }
+    websocket.onmessage = function(event){
+      console.log("onmessage:",event.data);
+    };
+
+    websocket.onclose = function(event){
+      console.log("onclose:",event.data);
+    };
+
+    //连接异常.
+    websocket.onerror = function(event){
+    console.log("onmerror:",event.data);
+    };
+
+  };
+
   render() {
     const {classes} = this.props;
     let candidates = this.handleItems(this.state.category);
@@ -309,7 +319,6 @@ class MarketView extends React.Component {
                     value={this.state.category}
                     onChange={this.handleChangeCategory}
                     input={<OutlinedInput/>}
-
                 >
                   <MenuItem value="Metal">Metal</MenuItem>
                   <MenuItem value="Energy">Energy</MenuItem>
@@ -344,7 +353,10 @@ class MarketView extends React.Component {
                 </FormControl>
             </GridItem>
             <GridItem xs={12} sm={12} md={3}>
-              <Button style={{background:"#37474f", color:"white", fontSize:"18px", marginTop:"-3%"}}>
+              <Button
+                  onClick={this.searchDepth}
+                  style={{background:"#37474f", color:"white", fontSize:"18px", marginTop:"-3%"}}
+              >
                 <Search/>&nbsp;&nbsp;Search
               </Button>
             </GridItem>
