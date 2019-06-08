@@ -5,6 +5,13 @@ import React from "react";
 import { withStyles } from '@material-ui/core/styles';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
+import Slide from "@material-ui/core/Slide";
+import Snackbar from "components/Snackbar/Snackbar.jsx";
+import ErrorOutline from "@material-ui/icons/ErrorOutline";
+import Done from "@material-ui/icons/Done";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const styles = theme => ({
   table:{
@@ -47,13 +54,126 @@ class OrderView extends React.Component {
     super(props);
     this.state = {
       checked: false
-    }
+    };
+
   }
 
   handleChangeCheck=()=>{
     this.setState({
       checked: !this.state.checked
     })
+  };
+
+  closeDialog=()=>{
+    this.props.closeDialog();
+  };
+
+  handleCommit=()=>{
+    if(this.state.orderType === "")
+      this.warning("Please choose order type！");
+    else if(this.state.operation === "")
+      this.warning("Please choose buy / sell！");
+    else if(this.state.type === "")
+      this.warning("Please choose product type！");
+    else if(this.state.amount === "")
+      this.warning("Please input the amount！");
+    else if(this.state.orderType === "Limit Order" && this.state.price1 === "")
+      this.warning("Please input the limit price！");
+    else if(this.state.orderType === "Stop Order") {
+      if(this.state.price1 === "")
+        this.warning("Please input the limit price！");
+      else if(this.state.price2 === "")
+        this.warning("Please input the stop price！");
+    }
+    if(!this.state.checked)
+      this.warning("Please check whether trade info is correct！");
+    else {
+      console.log("hello");
+      let side="";
+      let order_type = this.props.orderType.charAt(0).toLowerCase();
+      console.log(order_type);
+      if(this.props.operation === "Buy")
+        side = 'b';
+      else
+        side = 's';
+
+      fetch("http://202.120.40.8:30401/order/sendOrder", {
+        method:'POST',
+        mode:'cors',
+        headers:{
+          'Accept': '*/*',
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({
+          "amount": this.props.amount,
+          "futureID": 0,
+          "price": this.props.price,
+          "price2": 20,
+          "side": side,
+          "traderName": cookies.get("username"),
+          "type": order_type
+        })
+      })
+      .then(response => {
+        console.log('Request successful', response);
+        return response.json()
+            .then(result => {
+              console.log("result:", result);
+              if(response.status === 200)
+              {
+                this.success("订单提交成功,正在处理中...");
+                this.props.closeDialog();
+                window.location.href = "/order/self"
+              }
+
+              else
+                this.warning("订单提交失败，请重新提交！");
+
+
+            });
+      });
+    }
+  };
+
+  Transition(props) {
+    return <Slide direction="up" {...props} />;
+  }
+
+  typeToIcon = (type) => {
+    if (type === "success")
+      return Done;
+    if (type === "danger")
+      return ErrorOutline;
+    return null;
+  };
+
+  success = (msg) => {
+    this.setState({
+      notificationType: "success",
+      notificationMessage: msg
+    });
+    this.showNotification("br");
+  };
+
+  warning = (msg) => {
+    this.setState({
+      notificationType: "danger",
+      notificationMessage: msg
+    });
+    this.showNotification("br");
+  };
+
+  showNotification = (place) => {
+    let x = [];
+    x[place] = true;
+    this.setState({[place]: true});
+    this.alertTimeout = setTimeout(
+        function() {
+          x[place] = false;
+          this.setState(x);
+        }.bind(this),
+        2000
+    );
   };
 
 
@@ -93,10 +213,10 @@ class OrderView extends React.Component {
               </tr>
               <tr className={classes.tr}>
                 <td>
-                  <Button className={classes.button} >OK</Button>
+                  <Button className={classes.button} onClick={this.handleCommit}>OK</Button>
                 </td>
                 <td>
-                  <Button className={classes.button} style={{marginLeft:"0%"}}>Cancel</Button>
+                  <Button className={classes.button} style={{marginLeft:"0%"}} onClick={this.closeDialog}>Cancel</Button>
                 </td>
               </tr>
             </table>
@@ -120,10 +240,10 @@ class OrderView extends React.Component {
               </tr>
               <tr className={classes.tr}>
                 <td>
-                  <Button className={classes.button} >OK</Button>
+                  <Button className={classes.button} onClick={this.handleCommit}>OK</Button>
                 </td>
                 <td>
-                  <Button className={classes.button} style={{marginLeft:"0%"}}>Cancel</Button>
+                  <Button className={classes.button} style={{marginLeft:"0%"}} onClick={this.closeDialog}>Cancel</Button>
                 </td>
               </tr>
             </table>
@@ -163,10 +283,10 @@ class OrderView extends React.Component {
               </tr>
               <tr className={classes.tr}>
                 <td>
-                  <Button className={classes.button} >OK</Button>
+                  <Button className={classes.button} onClick={this.handleCommit}>OK</Button>
                 </td>
                 <td>
-                  <Button className={classes.button} style={{marginLeft:"0%"}}>Cancel</Button>
+                  <Button className={classes.button} style={{marginLeft:"0%"}} onClick={this.closeDialog}>Cancel</Button>
                 </td>
               </tr>
             </table>
@@ -176,6 +296,15 @@ class OrderView extends React.Component {
     return (
         <div>
           {order_table}
+          <Snackbar
+              place="br"
+              color={this.state.notificationType}
+              icon={this.typeToIcon(this.state.notificationType)}
+              message={this.state.notificationMessage}
+              open={this.state.br}
+              closeNotification={() => this.setState({ br: false })}
+              close
+          />
         </div>
     )
   }

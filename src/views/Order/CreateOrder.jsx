@@ -93,8 +93,8 @@ class CreateOrder extends React.Component {
       operation:"",
       amount:"",
       orderType:"",
-      startMonth:"",
-      endMonth:"",
+      startMonth:"2019-07",
+      endMonth:"2020-06",
       price1: "",
       price2:"",
       disable_price1: false,
@@ -205,7 +205,35 @@ class CreateOrder extends React.Component {
   };
 
   handleCommitOrder=()=>{
+      if(this.state.orderType === "")
+        this.warning("Please choose order type！");
+      else if(this.state.operation === "")
+        this.warning("Please choose buy / sell！");
+      else if(this.state.type === "")
+        this.warning("Please choose product type！");
+      else if(this.state.amount === "")
+        this.warning("Please input the amount！");
+      else if(this.state.orderType === "Limit Order" && this.state.price1 === "")
+        this.warning("Please input the limit price！");
+      else if(this.state.orderType === "Stop Order"){
+        if(this.state.price1 === "")
+          this.warning("Please input the limit price！");
+        else if(this.state.price2 === "")
+          this.warning("Please input the stop price！");
+      }
+      else{
+        console.log("start month:", this.state.startMonth);
+        console.log("end month:", this.state.endMonth);
+        this.setState({
+          preview: !this.state.preview,
+        })
+      }
+  };
 
+  closeDialog=()=>{
+    this.setState({
+      preview: false,
+    });
   };
 
   handleItems=(category)=>{
@@ -415,7 +443,7 @@ class CreateOrder extends React.Component {
                           disabled={this.state.disable_price1}
                           aria-describedby="weight-helper-text"
                           variant="outlined"
-                          label="Expectation Price"
+                          label="Limit Price"
                           InputProps={{
                             startAdornment: <InputAdornment position="start">$</InputAdornment>,
                           }}
@@ -431,7 +459,7 @@ class CreateOrder extends React.Component {
                           disabled={this.state.disable_price2}
                           aria-describedby="weight-helper-text"
                           variant="outlined"
-                          label="Limited Price"
+                          label="Stop Price"
                           InputProps={{
                             startAdornment: <InputAdornment position="start">$</InputAdornment>,
                           }}
@@ -494,8 +522,8 @@ class CreateOrder extends React.Component {
               <br/>
               <div>
                 <OrderView orderType={this.state.orderType} amount={this.state.amount}
-                        type={this.state.type} operation={this.state.operation} price={this.state.price1}
-                        broker="M"/>
+                           type={this.state.type} operation={this.state.operation} price={this.state.price1}
+                           broker="M" closeDialog={this.closeDialog}/>
               </div>
               <br/>
               <br/>

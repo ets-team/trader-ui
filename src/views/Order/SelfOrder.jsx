@@ -117,7 +117,7 @@ class SelfOrder extends React.Component {
                         <td className={classes.topCell} style={{width:"8%"}} >TradeID</td>
                         <td className={classes.topCell} style={{width:"8%"}} >OrderID</td>
                         <td className={classes.topCell} style={{width:"8%"}} >Broker</td>
-                        <td className={classes.topCell} style={{width:"10%"}} >Product</td>
+                        <td className={classes.topCell} style={{width:"10%"}}>Product</td>
                         <td className={classes.topCell} style={{width:"8%"}} >Period</td>
                         <td className={classes.topCell} style={{width:"7%"}} >Price</td>
                         <td className={classes.topCell} style={{width:"7%"}} >Qty</td>
