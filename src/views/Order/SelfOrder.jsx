@@ -14,6 +14,7 @@ import Card from "components/Card/Card.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import Cookies from "universal-cookie";
+import {name_company} from "variables/variables.jsx";
 
 const cookies = new Cookies();
 
@@ -73,22 +74,67 @@ class SelfOrder extends React.Component {
     this.state = {
       checked: false,
       orders:[],
-      rows:[{
-        tradeID: 312345,
-        orderID: 12345,
-        broker: "M",
-        product: "Gold Swaps",
-        period: "SEP16",
-        price:1246,
-        qty:50,
-        trader1: "Sam Wang",
-        company1: "ABC Crop",
-        side1:"sell",
-        trader2: "SiXian Liu",
-        company2:"Ms",
-        side2:"buy",
-      }]
+      rows:[]
     }
+
+    fetch('http://202.120.40.8:30405/history?traderID=0',
+    {
+      method: 'GET',
+      mode: 'cors',
+    })
+    .then(response => {
+      console.log('Request successful', response);
+      //console.log("status:",response.status);
+      return response.json()
+          .then(result => {
+            console.log("result:", result)
+            let trader1;
+            let trader2;
+            let side1;
+            let side2;
+            let order_id;
+            let buy_list = result["buy_list"];
+            let sell_list = result["sell_list"];
+            console.log(buy_list.length);
+
+            for(let i=0; i<buy_list.length; i++) {
+              if(buy_list[i]["initiatorSide"] === 'b') {
+                trader1 = buy_list[i]["buyTraderID"];
+                trader2 = buy_list[i]["sellTraderID"];
+                side1 = "buy";
+                side2 = "sell";
+              }
+              else {
+                trader1 = buy_list[i]["sellTraderID"];
+                trader2 = buy_list[i]["buyTraderID"];
+                side1 = "sell";
+                side2 = "buy";
+              }
+              if(buy_list[i]["buyTraderID"] === cookies.get("userID"))
+                order_id = buy_list[i]["buyTraderOrderID"];
+              else
+                order_id = buy_list[i]["sellTraderOrderID"];
+              this.state.rows.push({
+                tradeID: buy_list[i].tradeID,
+                orderID: order_id,
+                broker: "M",
+                product: buy_list[i]["future_name"],
+                period: buy_list[i]["period"],
+                price: buy_list[i]["price"],
+                qty: buy_list[i]["amount"],
+                trader1: name_company[trader1].name,
+                company1: name_company[trader1].company,
+                side1: side1,
+                trader2: name_company[trader1].name,
+                company2: name_company[trader2].company,
+                side2: side2,
+              })
+
+            }
+            console.log(this.state.rows.length);
+            this.forceUpdate();
+          })
+      })
   }
 
   render(){

@@ -81,8 +81,9 @@ class LoginPage extends React.Component {
    // console.log(e.target.value);
   };
 
-  handleLogin = e => {
-    e.preventDefault();
+  handleLogin = () => {
+    //e.preventDefault();
+    console.log("hello");
     fetch('http://202.120.40.8:30401/trader/login/'+ this.state.username + '/' + this.state.password,
       {
         method: 'POST',
@@ -96,7 +97,8 @@ class LoginPage extends React.Component {
             console.log(result);
             if(response.status === 500)
             {
-              this.warning("The username doesn't exit！");
+              this.warning("The username doesn't exist！");
+              //alert("The username doesn't exist!")
               this.setState({
                 username: "",
               },()=>{
@@ -108,21 +110,23 @@ class LoginPage extends React.Component {
               if(result === "fail")
               {
                 this.warning("The password is wrong. Please retype it！");
+                //alert("The password is wrong. Please retype it！")
                 this.setState({password:""},()=>{
                   this.forceUpdate();
                 });
               }
-              else if(result === "success")//success
+              else //success
               {
                 this.success("Login successfully！");
-
+                //alert("Login successfully");
                 cookies.set("login", true, { path: "/" });
                 cookies.set("username", this.state.username, { path: "/" });
+                cookies.set("userID", result, {path:"/"})
                 this.setState({
                   username:"",
                   password:"",
                 },()=>{
-                  window.location.href = "/";
+                  window.location.href = "/market";
                 });
               }
             }

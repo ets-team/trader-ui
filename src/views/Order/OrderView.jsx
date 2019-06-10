@@ -90,12 +90,18 @@ class OrderView extends React.Component {
     else {
       console.log("hello");
       let side="";
-      let order_type = this.props.orderType.charAt(0).toLowerCase();
-      console.log(order_type);
+      let order_type;// = this.props.orderType.charAt(0).toLowerCase().toString();
+      if(this.props.orderType === "Market Order")
+        order_type = "m";
+      else if(this.props.orderType === "Limit Order")
+        order_type = "l";
+      else if (this.props.orderType === "Stop Order")
+        order_type="s";
+
       if(this.props.operation === "Buy")
-        side = 'b';
+        side = "b";
       else
-        side = 's';
+        side = "s";
 
       fetch("http://202.120.40.8:30401/order/sendOrder", {
         method:'POST',
@@ -106,9 +112,9 @@ class OrderView extends React.Component {
         },
         body:JSON.stringify({
           "amount": this.props.amount,
-          "futureID": 0,
+          "futureID": 1,
           "price": this.props.price,
-          "price2": 20,
+          "price2": "",
           "side": side,
           "traderName": cookies.get("username"),
           "type": order_type
@@ -189,7 +195,7 @@ class OrderView extends React.Component {
                 <td/>
               </tr>
               <tr className={classes.tr}>
-                <td>&nbsp;&nbsp;&nbsp;{this.props.operation}&nbsp;{this.props.type}</td>
+                <td>&nbsp;&nbsp;&nbsp;{this.props.operation}&nbsp;{this.props.type}&nbsp;{this.props.period}</td>
                 <td/>
               </tr>
               <tr className={classes.tr}>
@@ -258,7 +264,7 @@ class OrderView extends React.Component {
                 <td/>
               </tr>
               <tr className={classes.tr}>
-                <td>&nbsp;&nbsp;&nbsp;{this.props.operation}&nbsp;{this.props.type}</td>
+                <td>&nbsp;&nbsp;&nbsp;{this.props.operation}&nbsp;{this.props.type}&nbsp;{this.props.period}</td>
                 <td/>
               </tr>
               <tr className={classes.tr}>

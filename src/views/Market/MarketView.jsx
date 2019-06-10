@@ -41,20 +41,19 @@ const styles = theme => ({
     marginTop:"20px"
   },
   header:{
-    width:"20%",
     color:"#424242",
     fontSize:"20px",
     fontWeight:"700",
     textAlign:"center",
     border:"1px solid black",
-    marginLeft:"20%"
+    height:"45px",
   },
   body:{
-    width:"20%",
     fontSize:"20px",
     fontWeight:"600",
     textAlign:"center",
-    border:"1px solid black"
+    border:"1px solid black",
+    height:"40px"
   },
   successText: {
     color: successColor
@@ -149,7 +148,7 @@ let Chartist = require("chartist");
 
 const dailySalesChart = {
   data: {
-    labels: ["M", "T", "W", "T", "F", "S", "S"],
+    labels: ["T", "W", "T", "F", "S", "S", "M"],
     series: [[12, 17, 7, 17, 23, 18, 38]]
   },
   options: {
@@ -199,8 +198,8 @@ const dailySalesChart = {
 
 const items = {
   "":[],
-  "Metal":["Gold", "Silver", "Copper", "Aluminium", "Zinc", "Lead", "Nickel", "Tin"],
-  "Energy":["Crude Oil", "Fuel Oil", "Pitch", "Rubber"],
+  "Metal":["GOLD", "SILVER", "COPPER"],
+  "Energy":["Oil", "Pitch", "Rubber"],
   "Derivatives":["Copper Option", "Rubber Option"],
 };
 
@@ -213,12 +212,12 @@ class MarketView extends React.Component {
       type:"",
       period:"",
       category:"",
-      rows:[{level1: "", buy_vol: "", price: 1254, sell_vol: 127, level2: 3,},
-            {level1: "", buy_vol: "", price: 1252, sell_vol: 32, level2: 2,},
-            {level1: "", buy_vol: "", price: 1250, sell_vol: 50, level2: 1,},
-            {level1: 1, buy_vol: 90, price: 1248, sell_vol: -1, level2: -1,},
-            {level1: 2, buy_vol: 340, price: 1246, sell_vol: -1, level2: -1,},
-            {level1: 3, buy_vol: 187, price: 1244, sell_vol: -1, level2: -1,}],
+      rows:[{level1: "", buy_vol: "", price: "", sell_vol: "", level2: ""},
+            {level1: "", buy_vol: "", price: "", sell_vol: "", level2: ""},
+            {level1: "", buy_vol: "", price: "", sell_vol: "", level2: ""},
+            {level1: "", buy_vol: "", price: "", sell_vol: "", level2: ""},
+            {level1: "", buy_vol: "", price: "", sell_vol: "", level2: ""},
+            {level1: "", buy_vol: "", price: "", sell_vol: "", level2: ""}],
     };
     //console.log(cookies.get("username"));
     let site = "ws://202.120.40.8:30401/chat/"+cookies.get("username");
@@ -302,120 +301,103 @@ class MarketView extends React.Component {
     <div >
       <br/>
       <br/>
-      <Card chart>
+      <br/>
+      <Card >
         <CardHeader style={{background:"#37474f"}}/>
         <CardBody>
           <GridContainer xs={12} sm={12} md={12}>
-            <GridItem xs={12} sm={12} md={12}>
-              <h6>Please choose a product:</h6>
-            </GridItem>
-          </GridContainer>
-          <GridContainer xs={12} sm={12} md={12}>
-            <GridItem xs={12} sm={12} md={1} />
-            <GridItem xs={12} sm={12} md={2}>
-              <FormControl variant="outlined"  style={{width:'100%', marginTop:"-30px"}}>
-                <InputLabel>Category</InputLabel>
-                <Select
-                    value={this.state.category}
-                    onChange={this.handleChangeCategory}
-                    input={<OutlinedInput/>}
-                >
-                  <MenuItem value="Metal">Metal</MenuItem>
-                  <MenuItem value="Energy">Energy</MenuItem>
-                  <MenuItem value="Derivatives">Derivatives</MenuItem>
-                </Select>
-              </FormControl>
-            </GridItem>
-            <GridItem xs={12} sm={12} md={2}>
-              <FormControl variant="outlined" style={{width:'100%', marginTop:'-30px'}}>
-                <InputLabel>Type</InputLabel>
-                <Select
-                    value={this.state.type}
-                    onChange={this.handleChangeType}
-                    input={<OutlinedInput/>}
-                >
-                  {candidates}
-                </Select>
-              </FormControl>
-            </GridItem>
-            <GridItem xs={12} sm={12} md={2}>
-                <FormControl variant="outlined"  style={{width:'100%', marginTop:'-30px'}}>
-                  <InputLabel>Period</InputLabel>
-                  <Select
-                      value={this.state.period}
-                      onChange={this.handleChangePeriod}
-                      input={<OutlinedInput/>}
-                  >
-                    <MenuItem value="SEP16">SEP16</MenuItem>
-                    <MenuItem value="OCT14">OCT14</MenuItem>
-                    <MenuItem value="NOV18">NOV18</MenuItem>
-                  </Select>
-                </FormControl>
-            </GridItem>
-            <GridItem xs={12} sm={12} md={3}>
-              <Button
-                  onClick={this.searchDepth}
-                  style={{background:"#37474f", color:"white", fontSize:"18px", marginTop:"-3%"}}
-              >
-                <Search/>&nbsp;&nbsp;Search
-              </Button>
-            </GridItem>
-          </GridContainer>
-          <GridContainer xs={12} sm={12} md={12}>
-            <GridItem xs={12} sm={12} md={12}>
-              <br/>
-            </GridItem>
-            <GridItem xs={12} sm={12} md={8}>
-              <h3 style={{fontWeight:"700", color:"#37474f", marginLeft:"5%"}}>Market Depth of {this.state.type} {this.state.period}:</h3>
-            </GridItem>
-            <GridItem xs={12} sm={12} md={4}>
-              <h3 style={{fontWeight:"700", color:"#37474f", marginLeft:"5%"}}>Daily Trend of {this.state.type} {this.state.period}:</h3>
-            </GridItem>
-            <GridItem xs={12} sm={12} md={8}>
+            <GridItem xs={12} sm={12} md={7}>
+              <Card>
+                <CardHeader style={{background:"#37474f", color:"white", fontSize:"24px", fontWeight:"600"}}>Market Depth of Product {this.state.type} {this.state.period}</CardHeader>
+                <CardBody>
                   <br/>
-                  <Table className="market page" style={{border:"1px solid black"}}>
+                  <FormControl variant="outlined"  style={{width:'20%', marginLeft:'2%'}}>
+                    <InputLabel>Category</InputLabel>
+                    <Select
+                        value={this.state.category}
+                        onChange={this.handleChangeCategory}
+                        input={<OutlinedInput/>}
+                    >
+                      <MenuItem value="Metal">Metal</MenuItem>
+                      <MenuItem value="Energy">Energy</MenuItem>
+                      <MenuItem value="Derivatives">Derivatives</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <FormControl variant="outlined" style={{width:'20%', marginLeft:'2%'}}>
+                    <InputLabel>Type</InputLabel>
+                    <Select
+                        value={this.state.type}
+                        onChange={this.handleChangeType}
+                        input={<OutlinedInput/>}
+                    >
+                      {candidates}
+                    </Select>
+                  </FormControl>
+                  <FormControl variant="outlined"  style={{width:'20%', marginTop:'-30px', marginLeft:'2%'}}>
+                    <InputLabel>Period</InputLabel>
+                    <Select
+                        value={this.state.period}
+                        onChange={this.handleChangePeriod}
+                        input={<OutlinedInput/>}
+                    >
+                      <MenuItem value="SEP16">SEP16</MenuItem>
+                      <MenuItem value="OCT14">OCT14</MenuItem>
+                      <MenuItem value="NOV18">NOV18</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <Button
+                      onClick={this.searchDepth}
+                      style={{background:"#37474f", color:"white", fontSize:"16px", marginTop:"-1%", marginLeft:'2%'}}
+                  >
+                    <Search/>&nbsp;&nbsp;Search
+                  </Button>
+                  <br/>
+                  <h1/>
+                  <Table style={{border:"1px solid black", width:"95%", marginLeft:"2%"}}>
                     <TableHead>
-                      <TableRow >
-                        <CustomTableCell className={classes.header}>Level</CustomTableCell>
-                        <CustomTableCell className={classes.header}>Buy-Vol</CustomTableCell>
-                        <CustomTableCell className={classes.header}>Price</CustomTableCell>
-                        <CustomTableCell className={classes.header}>Sell-Vol</CustomTableCell>
-                        <CustomTableCell className={classes.header}>Level</CustomTableCell>
-                      </TableRow>
+                        <tr>
+                          <td className={classes.header}>Level</td>
+                          <td className={classes.header}>Buy-Vol</td>
+                          <td className={classes.header}>Price</td>
+                          <td className={classes.header}>Sell-Vol</td>
+                          <td className={classes.header}>Level</td>
+                        </tr>
                     </TableHead>
                     <TableBody>
                       {this.state.rows.map(row => (
-                          <TableRow >
-                            <CustomTableCell className={classes.body} style={{background:"#bbdefb"}}>
-                              {row.level1 > 0 ? row.level1 : ""}
-                              </CustomTableCell>
-                            <CustomTableCell className={classes.body} style={{background:"#bbdefb"}}>
-                              {row.buy_vol > 0 ? row.buy_vol : ""}
-                              </CustomTableCell>
+                            <tr>
+                            <td className={classes.body} style={{background:"#bbdefb"}}>
+                              {row.level1}
+                            </td>
+                            <td className={classes.body} style={{background:"#bbdefb"}}>
+                              {row.buy_vol}
+                            </td>
                             {
-                              (row.level1 > 0) ?
-                                  <CustomTableCell className={classes.body} style={{background: "#9e9e9e", color:"#ad1457"}}>{row.price}</CustomTableCell>
-                              :
+                              (row.level1 !== "") ?
+                                  <td className={classes.body} style={{background: "#9e9e9e", color:"#ad1457"}}>{row.price}</td>
+                                  :
                                   (
-                                    (row.level2 === 1) ?
-                                      <CustomTableCell className={classes.body} style={{background: "#fff59d", color:"#01579b"}}>{row.price}</CustomTableCell>
-                                    :
-                                      <CustomTableCell className={classes.body} style={{background: "#9e9e9e", color:"#01579b"}}>{row.price}</CustomTableCell>
+                                      (row.level2 === "1") ?
+                                          <td className={classes.body} style={{background: "#fff59d", color:"#01579b"}}>{row.price}</td>
+                                          :
+                                          <td className={classes.body} style={{background: "#9e9e9e", color:"#01579b"}}>{row.price}</td>
                                   )
                             }
-                            <CustomTableCell className={classes.body} style={{background:"#f8bbd0"}}>
-                              {row.sell_vol > 0 ? row.sell_vol : ""}
-                              </CustomTableCell>
-                            <CustomTableCell className={classes.body} style={{background:"#f8bbd0"}}>
-                              {row.level2 > 0 ? row.level2 : ""}
-                              </CustomTableCell>
-                          </TableRow>
+                            <td className={classes.body} style={{background:"#f8bbd0"}}>
+                              {row.sell_vol}
+                            </td>
+                            <td className={classes.body} style={{background:"#f8bbd0"}}>
+                              {row.level2}
+                            </td>
+                            </tr>
                       ))}
                     </TableBody>
                   </Table>
+                </CardBody>
+              </Card>
             </GridItem>
-            <GridItem xs={12} sm={12} md={4}>
-              <Card chart>
+            <GridItem xs={12} sm={12} md={5}>
+              <Card chart style={{marginTop:"20%"}}>
                 <CardHeader color="warning">
                   <ChartistGraph
                       className="ct-chart"
@@ -426,7 +408,7 @@ class MarketView extends React.Component {
                   />
                 </CardHeader>
                 <CardBody>
-                  <h4 className={classes.cardTitle}>Price Trend in the past 5 days</h4>
+                  <h4 className={classes.cardTitle}>Price Trend in the past 7 days</h4>
                   <p className={classes.cardCategory}>
                   <span className={classes.successText}>
                     <ArrowUpward className={classes.upArrowCardCategory} /> 55%

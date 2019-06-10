@@ -78,8 +78,8 @@ const styles = theme => ({
 
 const items = {
   "":[],
-  "Metal":["Gold", "Silver", "Copper", "Aluminium", "Zinc", "Lead", "Nickel", "Tin"],
-  "Energy":["Crude Oil", "Fuel Oil", "Pitch", "Rubber"],
+  "Metal":["GOLD", "SILVER", "COPPER"],
+  "Energy":["OIL", "PITCH", "RUBBER"],
   "Derivatives":["Copper Option", "Rubber Option"],
 };
 
@@ -95,8 +95,9 @@ class CreateOrder extends React.Component {
       orderType:"",
       startMonth:"2019-07",
       endMonth:"2020-06",
-      price1: "",
-      price2:"",
+      price1: 0,
+      price2:0,
+      period:"JULY16",
       disable_price1: false,
       disable_price2: false,
       preview: false,
@@ -185,7 +186,7 @@ class CreateOrder extends React.Component {
     if(isNaN(e.target.value))
       this.warning("The Expectation Price you input is invalid！");
     this.setState({
-      price1: e.target.value
+      price1: parseInt(e.target.value)
     })
   };
 
@@ -194,7 +195,7 @@ class CreateOrder extends React.Component {
     if(isNaN(e.target.value))
       this.warning("The Limited Price you input is invalid！");
     this.setState({
-      price2: e.target.value
+      price2: parseInt(e.target.value)
     })
   };
 
@@ -523,7 +524,7 @@ class CreateOrder extends React.Component {
               <div>
                 <OrderView orderType={this.state.orderType} amount={this.state.amount}
                            type={this.state.type} operation={this.state.operation} price={this.state.price1}
-                           broker="M" closeDialog={this.closeDialog}/>
+                           broker="M"  period={this.state.period} closeDialog={this.closeDialog}/>
               </div>
               <br/>
               <br/>
