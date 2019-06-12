@@ -9,6 +9,14 @@ const name_company = [
   {
     name: "user",
     company: "ABC Crop",
+  },
+  {
+    name:"jack",
+    company:"GS",
+  },
+  {
+    name:"tom",
+    company:"DEF Crop",
   }
 ]
 

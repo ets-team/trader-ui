@@ -199,7 +199,7 @@ const dailySalesChart = {
 const items = {
   "":[],
   "Metal":["GOLD", "SILVER", "COPPER"],
-  "Energy":["Oil", "Pitch", "Rubber"],
+  "Energy":["OIL", "PITCH", "RUBBER"],
   "Derivatives":["Copper Option", "Rubber Option"],
 };
 
@@ -220,22 +220,10 @@ class MarketView extends React.Component {
             {level1: "", buy_vol: "", price: "", sell_vol: "", level2: ""}],
     };
     //console.log(cookies.get("username"));
-    let site = "ws://202.120.40.8:30401/chat/"+cookies.get("username");
-    if("WebSocket" in window){
-      websocket = new WebSocket(site);
-    }else{
-      alert("Not support websocket");
-    }
 
-    websocket.onopen = function(event){
-      console.log("建立连接成功！");
+
     };
 
-    websocket.onmessage = function(event){
-      console.log(event.data);
-    };
-
-  }
 
   handleChangeCategory=(e)=>{
     console.log(e.target.value);
@@ -269,30 +257,78 @@ class MarketView extends React.Component {
     return result;
   };
 
-  searchDepth=()=>{
+  searchDepth=()=> {
     let receiver = "user";
-    let futureId = 0;
+    let futureId;
     let msg = "bye";
-    let socketMsg = {msg:msg, toUser:receiver, type:1};
+    let socketMsg = {msg: msg, toUser: receiver, type: 1};
 
-    if(websocket) {
-      console.log("hello");
-      websocket.send(JSON.stringify(socketMsg));
-    }
-    websocket.onmessage = function(event){
-      console.log("onmessage:",event.data);
-    };
+    if (this.state.type + this.state.period === "OILJULY16")
+      futureId = "1";
+    else if (this.state.type + this.state.period === "OILAUG16")
+      futureId = "2";
+    else if (this.state.type + this.state.period === "GOLDJULY16")
+      futureId = "4";
+    else if (this.state.type + this.state.period === "SILVERJULY16")
+      futureId = "6";
 
-    websocket.onclose = function(event){
-      console.log("onclose:",event.data);
-    };
+    fetch('http://202.120.40.8:30405/market?futureID=' + futureId,
+        {
+          method: 'GET',
+          mode: 'cors',
+        })
+        .then(response => {
+          console.log('Request successful', response);
+          //console.log("status:",response.status);
+          return response.json()
+              .then(result => {
+                console.log("result:", result);
+                let buy_list = result["buy_list"];
+                let sell_list = result["sell_list"];
+                this.state.rows.length = 0;
+                //console.log(this.state.depth_rows.length);
+                let row;
+                let sell_price_list = Object.keys(sell_list);
+                let buy_price_list = Object.keys(buy_list);
 
-    //连接异常.
-    websocket.onerror = function(event){
-    console.log("onmerror:",event.data);
-    };
+                sell_price_list.sort();
+                buy_price_list.sort();
+                for (let i = 3; i > 0; i--) {
+                  if (sell_price_list.length >= i) {
+                    row = {
+                      level1: "",
+                      buy_vol: "",
+                      price: sell_price_list[i - 1],
+                      sell_vol: sell_list[sell_price_list[i - 1].toString()],
+                      level2: i
+                    }
+                  }
+                  else {
+                    row = {level1: "", buy_vol: "", price: "", sell_vol: "", level2: i}
+                  }
+                  this.state.rows.push(row);
+                }
+                for (let i = 3; i >= 1; i--) {
+                  if (buy_price_list.length >= i) {
+                    row = {
+                      level1: i,
+                      buy_vol: buy_list[buy_price_list[i - 1].toString()],
+                      price: buy_price_list[i - 1],
+                      sell_vol: "",
+                      level2: ""
+                    }
+                  }
+                  else {
+                    row = {level1: i, buy_vol: "", price: "", sell_vol: "", level2: ""}
+                  }
+                  this.state.rows.push(row);
+                  this.forceUpdate();
+                  console.log(this.state.rows);
+                }
+              })
+        });
+  }
 
-  };
 
   render() {
     const {classes} = this.props;
@@ -340,9 +376,9 @@ class MarketView extends React.Component {
                         onChange={this.handleChangePeriod}
                         input={<OutlinedInput/>}
                     >
-                      <MenuItem value="SEP16">SEP16</MenuItem>
-                      <MenuItem value="OCT14">OCT14</MenuItem>
-                      <MenuItem value="NOV18">NOV18</MenuItem>
+                      <MenuItem value="JULY16">JULY16</MenuItem>
+                      <MenuItem value="AUG16">AUG16</MenuItem>
+                      <MenuItem value="SEP18">SEP18</MenuItem>
                     </Select>
                   </FormControl>
                   <Button
@@ -373,11 +409,11 @@ class MarketView extends React.Component {
                               {row.buy_vol}
                             </td>
                             {
-                              (row.level1 !== "") ?
+                              (row.level1 > 0) ?
                                   <td className={classes.body} style={{background: "#9e9e9e", color:"#ad1457"}}>{row.price}</td>
                                   :
                                   (
-                                      (row.level2 === "1") ?
+                                      (row.level2 === 1) ?
                                           <td className={classes.body} style={{background: "#fff59d", color:"#01579b"}}>{row.price}</td>
                                           :
                                           <td className={classes.body} style={{background: "#9e9e9e", color:"#01579b"}}>{row.price}</td>

@@ -110,15 +110,12 @@ class SelfOrder extends React.Component {
                 side1 = "sell";
                 side2 = "buy";
               }
-              if(buy_list[i]["buyTraderID"] === cookies.get("userID"))
-                order_id = buy_list[i]["buyTraderOrderID"];
-              else
-                order_id = buy_list[i]["sellTraderOrderID"];
+              order_id = buy_list[i]["buyTraderOrderID"];
               this.state.rows.push({
                 tradeID: buy_list[i].tradeID,
                 orderID: order_id,
                 broker: "M",
-                product: buy_list[i]["future_name"],
+                product: buy_list[i]["product"],
                 period: buy_list[i]["period"],
                 price: buy_list[i]["price"],
                 qty: buy_list[i]["amount"],
@@ -129,7 +126,36 @@ class SelfOrder extends React.Component {
                 company2: name_company[trader2].company,
                 side2: side2,
               })
-
+            }
+            for(let i=0; i<sell_list.length; i++) {
+              if(sell_list[i]["initiatorSide"] === 'b') {
+                trader1 = sell_list[i]["buyTraderID"];
+                trader2 = sell_list[i]["sellTraderID"];
+                side1 = "buy";
+                side2 = "sell";
+              }
+              else {
+                trader1 = sell_list[i]["sellTraderID"];
+                trader2 = sell_list[i]["buyTraderID"];
+                side1 = "sell";
+                side2 = "buy";
+              }
+              order_id = sell_list[i]["sellTraderOrderID"];
+              this.state.rows.push({
+                tradeID: sell_list[i].tradeID,
+                orderID: order_id,
+                broker: "M",
+                product: sell_list[i]["product"],
+                period: sell_list[i]["period"],
+                price: sell_list[i]["price"],
+                qty: sell_list[i]["amount"],
+                trader1: name_company[trader1].name,
+                company1: name_company[trader1].company,
+                side1: side1,
+                trader2: name_company[trader1].name,
+                company2: name_company[trader2].company,
+                side2: side2,
+              })
             }
             console.log(this.state.rows.length);
             this.forceUpdate();

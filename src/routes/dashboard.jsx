@@ -39,33 +39,13 @@ export const dashboardRoutes = [
     component: SelfOrder
   },
   {
-    path: "/dashboard",
-    sidebarName: "Dashboard",
-    navbarName: "Material Dashboard",
-    icon: Dashboard,
-    component: DashboardPage
-  },
-  {
     path: "/user",
     sidebarName: "User Profile",
     navbarName: "Profile",
     icon: Person,
     component: UserProfile
   },
-  {
-    path: "/notifications",
-    sidebarName: "Notifications",
-    navbarName: "Notifications",
-    icon: Notifications,
-    component: NotificationsPage
-  },
-  {
-    path: "/upgrade-to-pro",
-    sidebarName: "Upgrade To PRO",
-    navbarName: "Upgrade To PRO",
-    icon: Unarchive,
-    component: UpgradeToPro
-  },
+
   { redirect: true, path: "/", to: "/market", navbarName: "Redirect" }
 ];
 
